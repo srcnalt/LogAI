@@ -433,8 +433,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76ef1924e2d0e1e41a09650303b61dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitSize: 2.24
+  drawMode: 0
+  player: {fileID: 217995175}
+  unitSize: 5
   drawColor: {r: 1, g: 0, b: 0, a: 0.166}
+  activeCubeColor: {r: 1, g: 0.8482759, b: 0, a: 0.459}
   boundingBoxSize: {x: 100, y: 10, z: 100}
   boundingBoxPivot: {x: -50, y: 1, z: -50}
   boundingBoxColor: {r: 0.07586217, g: 1, b: 0, a: 1}

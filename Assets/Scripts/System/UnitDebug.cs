@@ -4,11 +4,13 @@
 public class UnitDebug : MonoBehaviour
 {
     public DrawMode drawMode = DrawMode.on;
+    public Transform player;
 
     [Space(20)]
     [Range(1, 5)]
     public float unitSize;
     public Color drawColor;
+    public Color activeCubeColor;
 
     [Space(20)]
     public Vector3 boundingBoxSize;
@@ -59,11 +61,34 @@ public class UnitDebug : MonoBehaviour
                                                      boundingBoxPivot.y + unitSize / 2 + y,
                                                      boundingBoxPivot.z + unitSize / 2 + z);
 
-                    Gizmos.color = drawColor;
-                    Gizmos.DrawWireCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+                    bool isActiveCube = IsPlayerInTheBox(new Vector3(x, y, z));
+
+                    if (isActiveCube)
+                    {
+                        Gizmos.color = activeCubeColor;
+                        Gizmos.DrawCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+                    }
+                    else
+                    {
+                        Gizmos.color = drawColor;
+                        Gizmos.DrawWireCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+                    }
                 }
             }
         }
     }
-}
 
+    bool IsPlayerInTheBox(Vector3 cubeIndex)
+    {
+        Vector3 pos = player.position;
+
+        if(((pos.x > boundingBoxPivot.x + cubeIndex.x) && (pos.x < boundingBoxPivot.x + cubeIndex.x + unitSize)) &&
+        ((pos.y > boundingBoxPivot.y + cubeIndex.y) && (pos.y < boundingBoxPivot.y + cubeIndex.y + unitSize)) &&
+        ((pos.z > boundingBoxPivot.z + cubeIndex.z) && (pos.z < boundingBoxPivot.z + cubeIndex.z + unitSize)))
+        {
+            return true;
+        }
+
+        return false;
+    }
+}
