@@ -19,6 +19,17 @@ public class UnitDebug : MonoBehaviour
 
     public enum DrawMode { on, off, bounding_box_only, unit_cubes_only }
 
+    private Vector3 currentActiveCube = new Vector3(0, 0, 0);
+    private Vector3 previousActiveCube = new Vector3(0, 0, 0);
+
+    //DELET
+    private int counter = 0;
+
+    void Start()
+    {
+        InvokeRepeating("Logger", 0, 1);
+    }
+
     void OnDrawGizmos()
     {
         if (drawMode == DrawMode.off) return;
@@ -65,6 +76,8 @@ public class UnitDebug : MonoBehaviour
 
                     if (isActiveCube)
                     {
+                        currentActiveCube = new Vector3(x, y, z);
+
                         Gizmos.color = activeCubeColor;
                         Gizmos.DrawCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
                     }
@@ -75,6 +88,13 @@ public class UnitDebug : MonoBehaviour
                     }
                 }
             }
+        }
+
+        if(currentActiveCube != previousActiveCube)
+        {
+            Logger("u");
+
+            previousActiveCube = currentActiveCube;
         }
     }
 
@@ -90,5 +110,15 @@ public class UnitDebug : MonoBehaviour
         }
 
         return false;
+    }
+
+    void Logger(string name)
+    {
+        Debug.Log("Logged by " + name + " " + counter++);
+    }
+
+    void Logger()
+    {
+        Debug.Log("Logged by t " + counter++);
     }
 }
