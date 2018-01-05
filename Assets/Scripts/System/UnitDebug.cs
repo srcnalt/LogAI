@@ -3,19 +3,37 @@
 [ExecuteInEditMode]
 public class UnitDebug : MonoBehaviour
 {
+    public DrawMode drawMode = DrawMode.on;
+
+    [Space(20)]
     [Range(1, 5)]
     public float unitSize;
     public Color drawColor;
 
-    [Space]
+    [Space(20)]
     public Vector3 boundingBoxSize;
     public Vector3 boundingBoxPivot;
     public Color boundingBoxColor;
 
+    public enum DrawMode { on, off, bounding_box_only, unit_cubes_only }
+
     void OnDrawGizmos()
     {
-        DrawUnitCubes();
-        DrawBoundingBox();
+        if (drawMode == DrawMode.off) return;
+
+        if(drawMode == DrawMode.bounding_box_only)
+        {
+            DrawBoundingBox();
+        }
+        else if (drawMode == DrawMode.unit_cubes_only)
+        {
+            DrawUnitCubes();
+        }
+        else
+        {
+            DrawBoundingBox();
+            DrawUnitCubes();
+        }
     }
 
     void DrawBoundingBox()
@@ -48,3 +66,4 @@ public class UnitDebug : MonoBehaviour
         }
     }
 }
+

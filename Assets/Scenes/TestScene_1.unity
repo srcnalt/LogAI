@@ -433,10 +433,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76ef1924e2d0e1e41a09650303b61dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitSize: 4.77
-  drawColor: {r: 1, g: 0, b: 0, a: 1}
-  boundingBoxSize: {x: 15.85, y: 12, z: 12}
-  boundingBoxPivot: {x: 0, y: 1, z: 0}
+  unitSize: 2.24
+  drawColor: {r: 1, g: 0, b: 0, a: 0.166}
+  boundingBoxSize: {x: 100, y: 10, z: 100}
+  boundingBoxPivot: {x: -50, y: 1, z: -50}
   boundingBoxColor: {r: 0.07586217, g: 1, b: 0, a: 1}
 --- !u!4 &1082046577
 Transform:
