@@ -849,7 +849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76ef1924e2d0e1e41a09650303b61dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawMode: 2
+  drawMode: 0
   recorderState: 0
   player: {fileID: 217995175}
   playerCamera: {fileID: 514186093}

@@ -57,7 +57,9 @@ public class UnitDebug : MonoBehaviour
 
     public void Stop()
     {
+        CancelInvoke();
         recorderState = RecorderState.idle;
+
         sessionLog.sessionEnd = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss");
 
         string json = JsonUtility.ToJson(sessionLog);
@@ -156,11 +158,13 @@ public class UnitDebug : MonoBehaviour
 
     void Logger()
     {
+        Debug.Log("logged " + Time.time);
+
         if(recorderState == RecorderState.recording)
         {
             LogLine logLine = new LogLine();
 
-            logLine.miliseconds =    DateTime.Now.Millisecond;
+            logLine.time =           Time.time;
             logLine.stateName =      "TestState";
             logLine.actionName =     "TestAction";
             logLine.playerPosition = player.position;

@@ -4,7 +4,7 @@ using UnityEngine;
 [Serializable]
 public class LogLine
 {
-    public int miliseconds;
+    public float  time;
     public string stateName;
     public string actionName;
 
