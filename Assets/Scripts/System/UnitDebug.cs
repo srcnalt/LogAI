@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine;
 
 [ExecuteInEditMode]
 public class UnitDebug : MonoBehaviour
 {
     public DrawMode drawMode = DrawMode.on;
+    public RecorderState recorderState = RecorderState.idle;
     public Transform player;
+    public Transform playerCamera;
 
     [Space(20)]
     [Range(1, 5)]
@@ -18,16 +23,53 @@ public class UnitDebug : MonoBehaviour
     public Color boundingBoxColor;
 
     public enum DrawMode { on, off, bounding_box_only, unit_cubes_only }
+    public enum RecorderState { idle, recording, replaying };
 
     private Vector3 currentActiveCube = new Vector3(0, 0, 0);
     private Vector3 previousActiveCube = new Vector3(0, 0, 0);
 
-    //DELET
-    private int counter = 0;
+    private SessionLog sessionLog;
+    private float loggerTick = 1;
 
-    void Start()
+    private void Update()
     {
-        InvokeRepeating("Logger", 0, 1);
+        if (Input.GetKeyUp(KeyCode.R))
+        {
+            Record();
+            GuiManager.instance.recordButton.image.color = new Color(1, 0, 0); 
+        }
+
+        if (Input.GetKeyUp(KeyCode.T))
+        {
+            Stop();
+            GuiManager.instance.recordButton.image.color = new Color(1, 1, 1);
+        }
+    }
+
+    public void Record()
+    {
+        recorderState = RecorderState.recording;
+
+        sessionLog = new SessionLog(DateTime.Now.ToString("dd-MM-yy-HH-mm-ss"), "TestMap");
+
+        InvokeRepeating("Logger", 0, loggerTick);
+    }
+
+    public void Stop()
+    {
+        recorderState = RecorderState.idle;
+        sessionLog.sessionEnd = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss");
+
+        string json = JsonUtility.ToJson(sessionLog);
+
+        File.WriteAllText(Application.dataPath + "/Logs/session_log_" + sessionLog.sessionStart + ".json", json);
+    }
+
+    public void Replay()
+    {
+        recorderState = RecorderState.replaying;
+
+        //TODO: replay
     }
 
     void OnDrawGizmos()
@@ -92,7 +134,7 @@ public class UnitDebug : MonoBehaviour
 
         if(currentActiveCube != previousActiveCube)
         {
-            Logger("u");
+            Logger();
 
             previousActiveCube = currentActiveCube;
         }
@@ -112,13 +154,20 @@ public class UnitDebug : MonoBehaviour
         return false;
     }
 
-    void Logger(string name)
-    {
-        Debug.Log("Logged by " + name + " " + counter++);
-    }
-
     void Logger()
     {
-        Debug.Log("Logged by t " + counter++);
+        if(recorderState == RecorderState.recording)
+        {
+            LogLine logLine = new LogLine();
+
+            logLine.miliseconds =    DateTime.Now.Millisecond;
+            logLine.stateName =      "TestState";
+            logLine.actionName =     "TestAction";
+            logLine.playerPosition = player.position;
+            logLine.playerRotation = player.rotation;
+            logLine.cameraRotation = playerCamera.rotation;
+
+            sessionLog.logs.Add(logLine);
+        }
     }
 }

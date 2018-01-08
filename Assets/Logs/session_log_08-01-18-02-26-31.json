@@ -1,0 +1,115 @@
+{
+	"sessionStart": "08-01-18-02-26-31",
+	"sessionEnd": "08-01-18-02-26-36",
+	"mapName": "TestMap",
+	"logs": [{
+		"miliseconds": 918,
+		"stateName": "TestState",
+		"actionName": "TestAction",
+		"playerPosition": {
+			"x": -0.02540348283946514,
+			"y": 2.0,
+			"z": 1.2242295742034913
+		},
+		"playerRotation": {
+			"x": 0.0,
+			"y": -0.008726535364985466,
+			"z": 0.0,
+			"w": 0.9999619126319885
+		},
+		"cameraRotation": {
+			"x": 0.0,
+			"y": -0.008726535364985466,
+			"z": 0.0,
+			"w": 0.9999619126319885
+		}
+	},
+	{
+		"miliseconds": 931,
+		"stateName": "TestState",
+		"actionName": "TestAction",
+		"playerPosition": {
+			"x": 1.2312556505203248,
+			"y": 2.0,
+			"z": 5.097438812255859
+		},
+		"playerRotation": {
+			"x": 0.0,
+			"y": 0.2798290252685547,
+			"z": 0.0,
+			"w": 0.9600498676300049
+		},
+		"cameraRotation": {
+			"x": 0.0,
+			"y": 0.2798290252685547,
+			"z": 0.0,
+			"w": 0.9600498676300049
+		}
+	},
+	{
+		"miliseconds": 926,
+		"stateName": "TestState",
+		"actionName": "TestAction",
+		"playerPosition": {
+			"x": 3.4341859817504885,
+			"y": 2.0,
+			"z": 8.555343627929688
+		},
+		"playerRotation": {
+			"x": 0.0,
+			"y": 0.2798290252685547,
+			"z": 0.0,
+			"w": 0.9600498676300049
+		},
+		"cameraRotation": {
+			"x": 0.0,
+			"y": 0.2798290252685547,
+			"z": 0.0,
+			"w": 0.9600498676300049
+		}
+	},
+	{
+		"miliseconds": 915,
+		"stateName": "TestState",
+		"actionName": "TestAction",
+		"playerPosition": {
+			"x": 5.583386421203613,
+			"y": 2.0,
+			"z": 11.928909301757813
+		},
+		"playerRotation": {
+			"x": 0.0,
+			"y": 0.2798290252685547,
+			"z": 0.0,
+			"w": 0.9600498676300049
+		},
+		"cameraRotation": {
+			"x": 0.0,
+			"y": 0.2798290252685547,
+			"z": 0.0,
+			"w": 0.9600498676300049
+		}
+	},
+	{
+		"miliseconds": 909,
+		"stateName": "TestState",
+		"actionName": "TestAction",
+		"playerPosition": {
+			"x": 7.786316871643066,
+			"y": 2.0,
+			"z": 15.38681411743164
+		},
+		"playerRotation": {
+			"x": 0.0,
+			"y": 0.2798290252685547,
+			"z": 0.0,
+			"w": 0.9600498676300049
+		},
+		"cameraRotation": {
+			"x": 0.0,
+			"y": 0.2798290252685547,
+			"z": 0.0,
+			"w": 0.9600498676300049
+		}
+	}]
+}
