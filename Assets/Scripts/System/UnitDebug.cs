@@ -35,6 +35,7 @@ public class UnitDebug : MonoBehaviour
 
     #endregion
 
+    #region Private variables
     private Vector3 currentActiveCube = new Vector3(0, 0, 0);
     private Vector3 previousActiveCube = new Vector3(0, 0, 0);
 
@@ -42,6 +43,7 @@ public class UnitDebug : MonoBehaviour
     private float loggerTick = 1;
     private float loggerCount = 0;
     private bool loggerOn = false;
+    #endregion
 
     private void Update()
     {
@@ -125,6 +127,25 @@ public class UnitDebug : MonoBehaviour
         }
     }
 
+    void Logger()
+    {
+        Debug.Log("logged " + Time.time + " : " + loggerCount++);
+
+        if (recorderState == RecorderState.recording)
+        {
+            LogLine logLine = new LogLine();
+
+            logLine.time = Time.time;
+            logLine.stateName = "TestState";
+            logLine.actionName = "TestAction";
+            logLine.playerPosition = player.position;
+            logLine.playerRotation = player.rotation;
+            logLine.cameraRotation = playerCamera.rotation;
+
+            sessionLog.logs.Add(logLine);
+        }
+    }
+
     void OnDrawGizmos()
     {
         for (float x = 0; x < boundingBoxSize.x; x += unitSize)
@@ -151,23 +172,35 @@ public class UnitDebug : MonoBehaviour
                         previousActiveCube = currentActiveCube;
                     }
 
-                    if (drawMode != DrawMode.off && (drawMode == DrawMode.unit_cubes_only || drawMode != DrawMode.bounding_box_only))
-                    {
-                        if (isActiveCube)
-                        {
-                            Gizmos.color = activeCubeColor;
-                            Gizmos.DrawCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
-                        }
-                        else
-                        {
-                            Gizmos.color = drawColor;
-                            Gizmos.DrawWireCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
-                        }
-                    }
+                    DrawUnitCubes(isActiveCube, cubeCenter);
                 }
             }
         }
 
+        DrawBoundingBox();
+        DrawPathFromActiveRecording();
+    }
+
+    #region Debug methods
+    private void DrawUnitCubes(bool isActiveCube, Vector3 cubeCenter)
+    {
+        if (drawMode != DrawMode.off && (drawMode == DrawMode.unit_cubes_only || drawMode != DrawMode.bounding_box_only))
+        {
+            if (isActiveCube)
+            {
+                Gizmos.color = activeCubeColor;
+                Gizmos.DrawCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+            }
+            else
+            {
+                Gizmos.color = drawColor;
+                Gizmos.DrawWireCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+            }
+        }
+    }
+
+    private void DrawBoundingBox()
+    {
         if (drawMode != DrawMode.off && (drawMode == DrawMode.bounding_box_only || drawMode != DrawMode.unit_cubes_only))
         {
             Gizmos.color = new Color(1, 0, 0);
@@ -178,9 +211,6 @@ public class UnitDebug : MonoBehaviour
             Gizmos.color = boundingBoxColor;
             Gizmos.DrawWireCube(boundingBoxCenter, boundingBoxSize);
         }
-
-
-        DrawPathFromActiveRecording();
     }
 
     private void DrawPathFromActiveRecording()
@@ -204,7 +234,7 @@ public class UnitDebug : MonoBehaviour
     {
         Vector3 pos = player.position;
 
-        if(((pos.x > boundingBoxPivot.x + cubeIndex.x) && (pos.x < boundingBoxPivot.x + cubeIndex.x + unitSize)) &&
+        if (((pos.x > boundingBoxPivot.x + cubeIndex.x) && (pos.x < boundingBoxPivot.x + cubeIndex.x + unitSize)) &&
         ((pos.y > boundingBoxPivot.y + cubeIndex.y) && (pos.y < boundingBoxPivot.y + cubeIndex.y + unitSize)) &&
         ((pos.z > boundingBoxPivot.z + cubeIndex.z) && (pos.z < boundingBoxPivot.z + cubeIndex.z + unitSize)))
         {
@@ -214,22 +244,5 @@ public class UnitDebug : MonoBehaviour
         return false;
     }
 
-    void Logger()
-    {
-        Debug.Log("logged " + Time.time + " : " + loggerCount++);
-
-        if(recorderState == RecorderState.recording)
-        {
-            LogLine logLine = new LogLine();
-
-            logLine.time =           Time.time;
-            logLine.stateName =      "TestState";
-            logLine.actionName =     "TestAction";
-            logLine.playerPosition = player.position;
-            logLine.playerRotation = player.rotation;
-            logLine.cameraRotation = playerCamera.rotation;
-
-            sessionLog.logs.Add(logLine);
-        }
-    }
+    #endregion
 }
