@@ -1,48 +1,63 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class UnitDebug : MonoBehaviour
 {
+    #region Public variables
+
+    public enum DrawMode { on, off, bounding_box_only, unit_cubes_only }
+    public enum RecorderState { idle, recording, replaying };
+
+    [Header("System variables")]
     public DrawMode drawMode = DrawMode.on;
     public RecorderState recorderState = RecorderState.idle;
     public Transform player;
     public Transform playerCamera;
 
-    [Space(20)]
+    [Header("Unit Cube Variables")]
     [Range(1, 5)]
     public float unitSize;
     public Color drawColor;
     public Color activeCubeColor;
 
-    [Space(20)]
+    [Header("Bounding Box Variables")]
     public Vector3 boundingBoxSize;
     public Vector3 boundingBoxPivot;
     public Color boundingBoxColor;
 
-    public enum DrawMode { on, off, bounding_box_only, unit_cubes_only }
-    public enum RecorderState { idle, recording, replaying };
+    [Header("Active Log")]
+    public TextAsset activeLog;
+
+    #endregion
 
     private Vector3 currentActiveCube = new Vector3(0, 0, 0);
     private Vector3 previousActiveCube = new Vector3(0, 0, 0);
 
     private SessionLog sessionLog;
-    private float loggerTick = 1;
+    private float loggerTick = 10;
+    private float loggerCount = 0;
 
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             Record();
             GuiManager.instance.recordButton.image.color = new Color(1, 0, 0); 
         }
 
-        if (Input.GetKeyUp(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             Stop();
             GuiManager.instance.recordButton.image.color = new Color(1, 1, 1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Replay();
         }
     }
 
@@ -72,6 +87,34 @@ public class UnitDebug : MonoBehaviour
         recorderState = RecorderState.replaying;
 
         //TODO: replay
+
+        SessionLog replaySession = JsonUtility.FromJson<SessionLog>(activeLog.text);
+
+        StartCoroutine(PlayRecordingSteps(replaySession.logs));
+    }
+    
+    IEnumerator PlayRecordingSteps(List<LogLine> logLines)
+    {
+        float oldTime = 0;
+
+        foreach (LogLine line in logLines)
+        {
+            //current payer state, add all things here when needed in logLine type
+            Vector3 currentPos = player.position;
+            float time = 0;
+            float step = line.time - oldTime;
+
+            while (time <= step)
+            {
+                time += Time.deltaTime;
+
+                player.position = Vector3.Lerp(currentPos, line.playerPosition, time / step);
+
+                yield return null;
+            }
+
+            oldTime = line.time;
+        }
     }
 
     void OnDrawGizmos()
@@ -158,7 +201,7 @@ public class UnitDebug : MonoBehaviour
 
     void Logger()
     {
-        Debug.Log("logged " + Time.time);
+        Debug.Log("logged " + Time.time + " : " + loggerCount++);
 
         if(recorderState == RecorderState.recording)
         {

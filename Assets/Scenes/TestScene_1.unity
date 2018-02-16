@@ -318,9 +318,9 @@ GameObject:
   m_Component:
   - component: {fileID: 217995175}
   - component: {fileID: 217995174}
-  - component: {fileID: 217995173}
   - component: {fileID: 217995172}
   - component: {fileID: 217995171}
+  - component: {fileID: 217995173}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -339,7 +339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07f030b266e4d3746bd5040293981725, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 0.1
+  movementSpeed: 0.2
   sensitivity: 5
 --- !u!23 &217995172
 MeshRenderer:
@@ -402,7 +402,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 217995170}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 2.23, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 514186093}
@@ -477,7 +477,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Stop
+  m_Text: Stop (E)
 --- !u!222 &375475971
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -671,7 +671,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &621126773
 Transform:
   m_ObjectHideFlags: 0
@@ -849,7 +849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76ef1924e2d0e1e41a09650303b61dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawMode: 0
+  drawMode: 2
   recorderState: 0
   player: {fileID: 217995175}
   playerCamera: {fileID: 514186093}
@@ -859,6 +859,7 @@ MonoBehaviour:
   boundingBoxSize: {x: 100, y: 10, z: 100}
   boundingBoxPivot: {x: -50, y: 1, z: -50}
   boundingBoxColor: {r: 0.07586217, g: 1, b: 0, a: 1}
+  activeLog: {fileID: 4900000, guid: c0cecf55084b4cd4ca754d2edcd52d1b, type: 3}
 --- !u!4 &1082046577
 Transform:
   m_ObjectHideFlags: 0
@@ -1237,7 +1238,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Record
+  m_Text: Record (R)
 --- !u!222 &1370944073
 CanvasRenderer:
   m_ObjectHideFlags: 0
