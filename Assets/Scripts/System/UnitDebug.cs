@@ -119,69 +119,46 @@ public class UnitDebug : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (drawMode == DrawMode.off) return;
-
-        if(drawMode == DrawMode.bounding_box_only)
-        {
-            DrawBoundingBox();
-        }
-        else if (drawMode == DrawMode.unit_cubes_only)
-        {
-            DrawUnitCubes();
-        }
-        else
-        {
-            DrawBoundingBox();
-            DrawUnitCubes();
-        }
-    }
-
-    void DrawBoundingBox()
-    {
-        Gizmos.color = new Color(1, 0, 0);
-        Gizmos.DrawSphere(boundingBoxPivot, 0.1f);
-
-        Vector3 boundingBoxCenter = new Vector3(boundingBoxPivot.x + boundingBoxSize.x / 2, boundingBoxPivot.y + boundingBoxSize.y / 2, boundingBoxPivot.z + boundingBoxSize.z / 2);
-
-        Gizmos.color = boundingBoxColor;
-        Gizmos.DrawWireCube(boundingBoxCenter, boundingBoxSize);
-    }
-
-    void DrawUnitCubes()
-    {
         for (float x = 0; x < boundingBoxSize.x; x += unitSize)
         {
             for (float y = 0; y < boundingBoxSize.y; y += unitSize)
             {
                 for (float z = 0; z < boundingBoxSize.z; z += unitSize)
                 {
-                    Vector3 cubeCenter = new Vector3(boundingBoxPivot.x + unitSize / 2 + x, 
+                    Vector3 cubeCenter = new Vector3(boundingBoxPivot.x + unitSize / 2 + x,
                                                      boundingBoxPivot.y + unitSize / 2 + y,
                                                      boundingBoxPivot.z + unitSize / 2 + z);
 
                     bool isActiveCube = IsPlayerInTheBox(new Vector3(x, y, z));
 
-                    if (isActiveCube)
+                    if (drawMode != DrawMode.off && (drawMode == DrawMode.unit_cubes_only || drawMode != DrawMode.bounding_box_only))
                     {
-                        currentActiveCube = new Vector3(x, y, z);
+                        if (isActiveCube)
+                        {
+                            currentActiveCube = new Vector3(x, y, z);
 
-                        Gizmos.color = activeCubeColor;
-                        Gizmos.DrawCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
-                    }
-                    else
-                    {
-                        Gizmos.color = drawColor;
-                        Gizmos.DrawWireCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+                            Gizmos.color = activeCubeColor;
+                            Gizmos.DrawCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+                        }
+                        else
+                        {
+                            Gizmos.color = drawColor;
+                            Gizmos.DrawWireCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+                        }
                     }
                 }
             }
         }
 
-        if(currentActiveCube != previousActiveCube)
+        if (drawMode != DrawMode.off && (drawMode == DrawMode.bounding_box_only || drawMode != DrawMode.unit_cubes_only))
         {
-            Logger();
+            Gizmos.color = new Color(1, 0, 0);
+            Gizmos.DrawSphere(boundingBoxPivot, 0.1f);
 
-            previousActiveCube = currentActiveCube;
+            Vector3 boundingBoxCenter = new Vector3(boundingBoxPivot.x + boundingBoxSize.x / 2, boundingBoxPivot.y + boundingBoxSize.y / 2, boundingBoxPivot.z + boundingBoxSize.z / 2);
+
+            Gizmos.color = boundingBoxColor;
+            Gizmos.DrawWireCube(boundingBoxCenter, boundingBoxSize);
         }
     }
 
