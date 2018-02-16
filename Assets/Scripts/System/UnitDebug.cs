@@ -38,8 +38,9 @@ public class UnitDebug : MonoBehaviour
     private Vector3 previousActiveCube = new Vector3(0, 0, 0);
 
     private SessionLog sessionLog;
-    private float loggerTick = 10;
+    private float loggerTick = 1;
     private float loggerCount = 0;
+    private bool loggerOn = false;
 
     private void Update()
     {
@@ -63,6 +64,8 @@ public class UnitDebug : MonoBehaviour
 
     public void Record()
     {
+        loggerOn = true;
+
         recorderState = RecorderState.recording;
 
         sessionLog = new SessionLog(DateTime.Now.ToString("dd-MM-yy-HH-mm-ss"), "TestMap");
@@ -72,6 +75,8 @@ public class UnitDebug : MonoBehaviour
 
     public void Stop()
     {
+        loggerOn = false;
+
         CancelInvoke();
         recorderState = RecorderState.idle;
 
@@ -131,12 +136,22 @@ public class UnitDebug : MonoBehaviour
 
                     bool isActiveCube = IsPlayerInTheBox(new Vector3(x, y, z));
 
+                    if (isActiveCube)
+                    {
+                        currentActiveCube = new Vector3(x, y, z);
+                    }
+
+                    if (currentActiveCube != previousActiveCube && loggerOn)
+                    {
+                        Logger();
+
+                        previousActiveCube = currentActiveCube;
+                    }
+
                     if (drawMode != DrawMode.off && (drawMode == DrawMode.unit_cubes_only || drawMode != DrawMode.bounding_box_only))
                     {
                         if (isActiveCube)
                         {
-                            currentActiveCube = new Vector3(x, y, z);
-
                             Gizmos.color = activeCubeColor;
                             Gizmos.DrawCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
                         }
