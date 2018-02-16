@@ -31,6 +31,7 @@ public class UnitDebug : MonoBehaviour
 
     [Header("Active Log")]
     public TextAsset activeLog;
+    public bool drawPath;
 
     #endregion
 
@@ -89,6 +90,8 @@ public class UnitDebug : MonoBehaviour
 
     public void Replay()
     {
+        Debug.Log("Replaying...");
+
         recorderState = RecorderState.replaying;
 
         //TODO: replay
@@ -174,6 +177,26 @@ public class UnitDebug : MonoBehaviour
 
             Gizmos.color = boundingBoxColor;
             Gizmos.DrawWireCube(boundingBoxCenter, boundingBoxSize);
+        }
+
+
+        DrawPathFromActiveRecording();
+    }
+
+    private void DrawPathFromActiveRecording()
+    {
+        if (drawPath && activeLog)
+        {
+            List<LogLine> logs = JsonUtility.FromJson<SessionLog>(activeLog.text).logs;
+
+            for (int i = 0; i < logs.Count - 1; i++)
+            {
+                Gizmos.color = Color.white;
+                Gizmos.DrawSphere(logs[i + 1].playerPosition, 0.1f);
+
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawLine(logs[i].playerPosition, logs[i + 1].playerPosition);
+            }
         }
     }
 

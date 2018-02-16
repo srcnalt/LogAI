@@ -302,7 +302,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Replay
+  m_Text: Replay (T)
 --- !u!222 &90853766
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -859,7 +859,8 @@ MonoBehaviour:
   boundingBoxSize: {x: 100, y: 10, z: 100}
   boundingBoxPivot: {x: -50, y: 1, z: -50}
   boundingBoxColor: {r: 0.07586217, g: 1, b: 0, a: 1}
-  activeLog: {fileID: 4900000, guid: c0cecf55084b4cd4ca754d2edcd52d1b, type: 3}
+  activeLog: {fileID: 4900000, guid: 2b53d3e4b6986f844ba8879e4c61b536, type: 3}
+  drawPath: 0
 --- !u!4 &1082046577
 Transform:
   m_ObjectHideFlags: 0
