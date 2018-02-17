@@ -5,6 +5,7 @@ using UnityEngine;
 public class GrapplingHook : MonoBehaviour
 {
     public GameObject player;
+    public float speed;
 
     private Transform cam;
     private LineRenderer line;
@@ -55,7 +56,7 @@ public class GrapplingHook : MonoBehaviour
 
         if (Vector3.Distance(transform.position, targetPoint) > 1)
         {
-            player.GetComponent<Rigidbody>().velocity = (targetPoint - transform.position).normalized * 10;
+            player.GetComponent<Rigidbody>().velocity = (targetPoint - transform.position).normalized * speed;
         }
     }
 }
