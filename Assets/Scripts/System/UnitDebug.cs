@@ -106,11 +106,11 @@ public class UnitDebug : MonoBehaviour
     IEnumerator PlayRecordingSteps(List<LogLine> logLines)
     {
         float oldTime = 0;
+        LogLine firstLog = logLines[0];
+        logLines.RemoveAt(0);
 
         foreach (LogLine line in logLines)
         {
-            //current payer state, add all things here when needed in logLine type
-            Vector3 currentPos = player.position;
             float time = 0;
             float step = line.time - oldTime;
 
@@ -118,13 +118,18 @@ public class UnitDebug : MonoBehaviour
             {
                 time += Time.deltaTime;
 
-                player.position = Vector3.Lerp(currentPos, line.playerPosition, time / step);
+                player.position = Vector3.Lerp(firstLog.playerPosition, line.playerPosition, time / step);
+                player.rotation = Quaternion.Lerp(firstLog.playerRotation, line.playerRotation, time / step);
+                Camera.main.transform.rotation = Quaternion.Lerp(firstLog.cameraRotation, line.cameraRotation, time / step);
 
                 yield return null;
             }
 
             oldTime = line.time;
+            firstLog = line;
         }
+
+        Debug.Log("Replay ended...");
     }
 
     void Logger()
