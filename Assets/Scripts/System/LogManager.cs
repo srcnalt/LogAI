@@ -5,9 +5,10 @@ using System.IO;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class UnitDebug : MonoBehaviour
+public class LogManager : MonoBehaviour
 {
     #region Public variables
+    public static LogManager instance;
 
     public enum DrawMode { on, off, bounding_box_only, unit_cubes_only }
     public enum RecorderState { idle, recording, replaying };
@@ -44,6 +45,14 @@ public class UnitDebug : MonoBehaviour
     private float loggerCount = 0;
     private bool loggerOn = false;
     #endregion
+
+    private void Awake()
+    {
+        if (instance != this)
+            Destroy(instance);
+
+        instance = this;
+    }
 
     private void Update()
     {
@@ -151,6 +160,10 @@ public class UnitDebug : MonoBehaviour
         }
     }
 
+    #region Visual Debug Methods
+
+    //TODO: Add only active box
+
     void OnDrawGizmos()
     {
         for (float x = 0; x < boundingBoxSize.x; x += unitSize)
@@ -186,7 +199,6 @@ public class UnitDebug : MonoBehaviour
         DrawPathFromActiveRecording();
     }
 
-    #region Debug methods
     private void DrawUnitCubes(bool isActiveCube, Vector3 cubeCenter)
     {
         if (drawMode != DrawMode.off && (drawMode == DrawMode.unit_cubes_only || drawMode != DrawMode.bounding_box_only))

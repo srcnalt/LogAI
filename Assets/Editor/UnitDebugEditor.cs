@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(UnitDebug))]
-public class UnitDebugEditor : Editor {
-
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
-    }
+[CustomEditor(typeof(LogManager))]
+public class LogManagerEditor : Editor {
+    //TODO: Fold out for visuals of logger
 }
