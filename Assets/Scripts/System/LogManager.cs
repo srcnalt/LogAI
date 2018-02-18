@@ -83,7 +83,7 @@ public class LogManager : MonoBehaviour
 
         if(recorderState == RecorderState.recording)
         {
-            InsertLogByUnitChange();
+            //InsertLogByUnitChange();
         }
     }
 

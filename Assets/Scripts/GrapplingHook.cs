@@ -51,11 +51,8 @@ public class GrapplingHook : MonoBehaviour
 
             targetPoint = hit.point;
         }
-
-        if (LogManager.instance.recorderState == LogManager.RecorderState.recording)
-            LogManager.instance.Logger("Press");
-
-        Debug.Log("Press");
+        
+        LogManager.instance.Logger("Press");
     }
 
     public void Release()
@@ -63,10 +60,7 @@ public class GrapplingHook : MonoBehaviour
         hooked = false;
         line.enabled = false;
 
-        if(LogManager.instance.recorderState == LogManager.RecorderState.recording)
-            LogManager.instance.Logger("Release");
-
-        Debug.Log("Release");
+        LogManager.instance.Logger("Release");
     }
 
     public void ConnectHook()
