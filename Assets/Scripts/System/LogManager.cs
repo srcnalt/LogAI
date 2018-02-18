@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -10,7 +11,7 @@ public class LogManager : MonoBehaviour
     #region Public variables
     public static LogManager instance;
 
-    public enum DrawMode { on, off, bounding_box_only, unit_cubes_only }
+    public enum DrawMode { off, on, bounding_box_only, unit_cubes_only }
     public enum RecorderState { idle, recording, replaying };
 
     [Header("System variables")]
@@ -18,6 +19,8 @@ public class LogManager : MonoBehaviour
     public RecorderState recorderState = RecorderState.idle;
     public Transform player;
     public Transform playerCamera;
+    public GrapplingHook grapplingHook;
+    public float loggerTick;
 
     [Header("Unit Cube Variables")]
     [Range(1, 5)]
@@ -39,11 +42,8 @@ public class LogManager : MonoBehaviour
     #region Private variables
     private Vector3 currentActiveCube = new Vector3(0, 0, 0);
     private Vector3 previousActiveCube = new Vector3(0, 0, 0);
-
     private SessionLog sessionLog;
-    private float loggerTick = 1;
-    private float loggerCount = 0;
-    private bool loggerOn = false;
+    private Dictionary<string, Action> actionList;
     #endregion
 
     private void Awake()
@@ -52,6 +52,14 @@ public class LogManager : MonoBehaviour
             Destroy(instance);
 
         instance = this;
+    }
+
+    private void Start()
+    {
+        actionList = new Dictionary<string, Action>();
+
+        actionList.Add("Press", grapplingHook.Press);
+        actionList.Add("Release", grapplingHook.Release);
     }
 
     private void Update()
@@ -72,12 +80,15 @@ public class LogManager : MonoBehaviour
         {
             Replay();
         }
+
+        if(recorderState == RecorderState.recording)
+        {
+            InsertLogByUnitChange();
+        }
     }
 
     public void Record()
     {
-        loggerOn = true;
-
         recorderState = RecorderState.recording;
 
         sessionLog = new SessionLog(DateTime.Now.ToString("dd-MM-yy-HH-mm-ss"), "TestMap");
@@ -87,8 +98,6 @@ public class LogManager : MonoBehaviour
 
     public void Stop()
     {
-        loggerOn = false;
-
         CancelInvoke();
         recorderState = RecorderState.idle;
 
@@ -127,9 +136,17 @@ public class LogManager : MonoBehaviour
             {
                 time += Time.deltaTime;
 
-                player.position = Vector3.Lerp(firstLog.playerPosition, line.playerPosition, time / step);
+                //Shut position changing leave it to physics
+                //player.position = Vector3.Lerp(firstLog.playerPosition, line.playerPosition, time / step);
                 player.rotation = Quaternion.Lerp(firstLog.playerRotation, line.playerRotation, time / step);
                 Camera.main.transform.rotation = Quaternion.Lerp(firstLog.cameraRotation, line.cameraRotation, time / step);
+
+                //Call the registered method
+                if(line.actionName != string.Empty)
+                {
+                    Debug.Log("test");
+                    actionList[line.actionName].Invoke();
+                }
 
                 yield return null;
             }
@@ -141,22 +158,53 @@ public class LogManager : MonoBehaviour
         Debug.Log("Replay ended...");
     }
 
-    void Logger()
+    private void Logger()
     {
-        Debug.Log("logged " + Time.time + " : " + loggerCount++);
+        Logger(null);
+    }
 
+    public void Logger(string actionName)
+    {
         if (recorderState == RecorderState.recording)
         {
             LogLine logLine = new LogLine();
 
             logLine.time = Time.time;
-            logLine.stateName = "TestState";
-            logLine.actionName = "TestAction";
+            logLine.stateName = null;
+            logLine.actionName = actionName;
             logLine.playerPosition = player.position;
             logLine.playerRotation = player.rotation;
             logLine.cameraRotation = playerCamera.rotation;
 
             sessionLog.logs.Add(logLine);
+        }
+    }
+
+    private void InsertLogByUnitChange()
+    {
+        //TODO: Better algorithm for this. detect xyz from current pos floor ceil etc. o(3) too bad. Apply for onGizmos too.
+
+        for (float x = 0; x < boundingBoxSize.x; x += unitSize)
+        {
+            for (float y = 0; y < boundingBoxSize.y; y += unitSize)
+            {
+                for (float z = 0; z < boundingBoxSize.z; z += unitSize)
+                {
+                    bool isActiveCube = IsPlayerInTheBox(new Vector3(x, y, z));
+
+                    if (isActiveCube)
+                    {
+                        currentActiveCube = new Vector3(x, y, z);
+                    }
+
+                    if (currentActiveCube != previousActiveCube)
+                    {
+                        previousActiveCube = currentActiveCube;
+
+                        Logger(null);
+                    }
+                }
+            }
         }
     }
 
@@ -166,6 +214,10 @@ public class LogManager : MonoBehaviour
 
     void OnDrawGizmos()
     {
+        DrawPathFromActiveRecording();
+
+        if (drawMode == DrawMode.off) return;
+
         for (float x = 0; x < boundingBoxSize.x; x += unitSize)
         {
             for (float y = 0; y < boundingBoxSize.y; y += unitSize)
@@ -183,10 +235,8 @@ public class LogManager : MonoBehaviour
                         currentActiveCube = new Vector3(x, y, z);
                     }
 
-                    if (currentActiveCube != previousActiveCube && loggerOn)
+                    if (currentActiveCube != previousActiveCube)
                     {
-                        Logger();
-
                         previousActiveCube = currentActiveCube;
                     }
 
@@ -196,12 +246,11 @@ public class LogManager : MonoBehaviour
         }
 
         DrawBoundingBox();
-        DrawPathFromActiveRecording();
     }
 
     private void DrawUnitCubes(bool isActiveCube, Vector3 cubeCenter)
     {
-        if (drawMode != DrawMode.off && (drawMode == DrawMode.unit_cubes_only || drawMode != DrawMode.bounding_box_only))
+        if (drawMode == DrawMode.unit_cubes_only || drawMode != DrawMode.bounding_box_only)
         {
             if (isActiveCube)
             {
@@ -218,7 +267,7 @@ public class LogManager : MonoBehaviour
 
     private void DrawBoundingBox()
     {
-        if (drawMode != DrawMode.off && (drawMode == DrawMode.bounding_box_only || drawMode != DrawMode.unit_cubes_only))
+        if (drawMode == DrawMode.bounding_box_only || drawMode != DrawMode.unit_cubes_only)
         {
             Gizmos.color = new Color(1, 0, 0);
             Gizmos.DrawSphere(boundingBoxPivot, 0.1f);
@@ -239,7 +288,11 @@ public class LogManager : MonoBehaviour
             for (int i = 0; i < logs.Count - 1; i++)
             {
                 Gizmos.color = Color.white;
-                Gizmos.DrawSphere(logs[i + 1].playerPosition, 0.1f);
+
+                if (logs[i + 1].actionName != string.Empty)
+                    Handles.Label(logs[i + 1].playerPosition, logs[i + 1].actionName);
+                else
+                    Gizmos.DrawSphere(logs[i + 1].playerPosition, 0.1f);
 
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawLine(logs[i].playerPosition, logs[i + 1].playerPosition);

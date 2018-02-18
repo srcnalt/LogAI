@@ -11,7 +11,7 @@ public class GrapplingHook : MonoBehaviour
     private LineRenderer line;
 
     private Vector3 targetPoint;
-    private bool hooked;
+    public bool hooked;
 
     private void Start()
     {
@@ -21,26 +21,17 @@ public class GrapplingHook : MonoBehaviour
         cam = Camera.main.transform;
         line = GetComponent<LineRenderer>();
     }
-
+    
     void Update ()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit hit;
-
-            if (Physics.Raycast(cam.position, cam.forward, out hit, 100))
-            {
-                hooked = true;
-                line.enabled = true;
-
-                targetPoint = hit.point;
-            }
+            Press();
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            hooked = false;
-            line.enabled = false;
+            Release();
         }
 
         if (hooked)
@@ -49,7 +40,36 @@ public class GrapplingHook : MonoBehaviour
         }
 	}
 
-    private void ConnectHook()
+    public void Press()
+    {
+        RaycastHit hit;
+
+        if (Physics.Raycast(cam.position, cam.forward, out hit, 100))
+        {
+            hooked = true;
+            line.enabled = true;
+
+            targetPoint = hit.point;
+        }
+
+        if (LogManager.instance.recorderState == LogManager.RecorderState.recording)
+            LogManager.instance.Logger("Press");
+
+        Debug.Log("Press");
+    }
+
+    public void Release()
+    {
+        hooked = false;
+        line.enabled = false;
+
+        if(LogManager.instance.recorderState == LogManager.RecorderState.recording)
+            LogManager.instance.Logger("Release");
+
+        Debug.Log("Release");
+    }
+
+    public void ConnectHook()
     {
         line.SetPosition(0, transform.position);
         line.SetPosition(1, targetPoint);
