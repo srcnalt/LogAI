@@ -20,6 +20,7 @@ public class LogManager : MonoBehaviour
     public Transform player;
     public Transform playerCamera;
     public GrapplingHook grapplingHook;
+    public Transform spawnPoint;
     public float loggerTick;
 
     [Header("Unit Cube Variables")]
@@ -60,6 +61,8 @@ public class LogManager : MonoBehaviour
 
         actionList.Add("Press", grapplingHook.Press);
         actionList.Add("Release", grapplingHook.Release);
+
+        player.position = spawnPoint.position;
     }
 
     private void Update()
@@ -92,7 +95,7 @@ public class LogManager : MonoBehaviour
         recorderState = RecorderState.recording;
 
         sessionLog = new SessionLog(DateTime.Now.ToString("dd-MM-yy-HH-mm-ss"), "TestMap");
-
+        
         InvokeRepeating("Logger", 0, loggerTick);
     }
 
@@ -111,6 +114,8 @@ public class LogManager : MonoBehaviour
     public void Replay()
     {
         Debug.Log("Replaying...");
+
+        player.position = spawnPoint.position;
 
         recorderState = RecorderState.replaying;
 
@@ -144,7 +149,7 @@ public class LogManager : MonoBehaviour
                 //Call the registered method
                 if(line.actionName != string.Empty)
                 {
-                    Debug.Log("test");
+                    Debug.Log("Invoked method...");
                     actionList[line.actionName].Invoke();
                 }
 
@@ -182,29 +187,19 @@ public class LogManager : MonoBehaviour
 
     private void InsertLogByUnitChange()
     {
-        //TODO: Better algorithm for this. detect xyz from current pos floor ceil etc. o(3) too bad. Apply for onGizmos too.
+        Vector3 currentActiveCube = new Vector3(
+            Mathf.Floor(player.position.x / unitSize),
+            Mathf.Floor(player.position.y / unitSize),
+            Mathf.Floor(player.position.z / unitSize)
+        );
 
-        for (float x = 0; x < boundingBoxSize.x; x += unitSize)
+        if (previousActiveCube != currentActiveCube)
         {
-            for (float y = 0; y < boundingBoxSize.y; y += unitSize)
-            {
-                for (float z = 0; z < boundingBoxSize.z; z += unitSize)
-                {
-                    bool isActiveCube = IsPlayerInTheBox(new Vector3(x, y, z));
+            previousActiveCube = currentActiveCube;
 
-                    if (isActiveCube)
-                    {
-                        currentActiveCube = new Vector3(x, y, z);
-                    }
+            Debug.Log("logged");
 
-                    if (currentActiveCube != previousActiveCube)
-                    {
-                        previousActiveCube = currentActiveCube;
-
-                        Logger(null);
-                    }
-                }
-            }
+            Logger(null);
         }
     }
 
@@ -218,31 +213,21 @@ public class LogManager : MonoBehaviour
 
         if (drawMode == DrawMode.off) return;
 
-        for (float x = 0; x < boundingBoxSize.x; x += unitSize)
+        Vector3 currentActiveCube = new Vector3(
+            Mathf.Floor(player.position.x / unitSize),
+            Mathf.Floor(player.position.y / unitSize),
+            Mathf.Floor(player.position.z / unitSize)
+        );
+
+        Vector3 cubeCenter = new Vector3(
+            boundingBoxPivot.x + unitSize / 2 + currentActiveCube.x,
+            boundingBoxPivot.y + unitSize / 2 + currentActiveCube.y,
+            boundingBoxPivot.z + unitSize / 2 + currentActiveCube.z
+        );
+
+        if (previousActiveCube != currentActiveCube)
         {
-            for (float y = 0; y < boundingBoxSize.y; y += unitSize)
-            {
-                for (float z = 0; z < boundingBoxSize.z; z += unitSize)
-                {
-                    Vector3 cubeCenter = new Vector3(boundingBoxPivot.x + unitSize / 2 + x,
-                                                     boundingBoxPivot.y + unitSize / 2 + y,
-                                                     boundingBoxPivot.z + unitSize / 2 + z);
-
-                    bool isActiveCube = IsPlayerInTheBox(new Vector3(x, y, z));
-
-                    if (isActiveCube)
-                    {
-                        currentActiveCube = new Vector3(x, y, z);
-                    }
-
-                    if (currentActiveCube != previousActiveCube)
-                    {
-                        previousActiveCube = currentActiveCube;
-                    }
-
-                    DrawUnitCubes(isActiveCube, cubeCenter);
-                }
-            }
+            previousActiveCube = currentActiveCube;            
         }
 
         DrawBoundingBox();
