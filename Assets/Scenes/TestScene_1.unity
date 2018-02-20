@@ -877,7 +877,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76ef1924e2d0e1e41a09650303b61dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawMode: 0
   recorderState: 0
   player: {fileID: 217995175}
   playerCamera: {fileID: 425328029}
@@ -890,8 +889,12 @@ MonoBehaviour:
   boundingBoxSize: {x: 40, y: 100, z: 100}
   boundingBoxPivot: {x: -20, y: 1, z: -50}
   boundingBoxColor: {r: 0.07586217, g: 1, b: 0, a: 1}
-  activeLog: {fileID: 4900000, guid: f04230215a1e05e4fafaae0d2c5e8410, type: 3}
-  drawPath: 1
+  activeLog: {fileID: 4900000, guid: c36fdedb3b628e647b65c48b2c75bbc3, type: 3}
+  drawPath: 0
+  logs:
+  - {fileID: 4900000, guid: f04230215a1e05e4fafaae0d2c5e8410, type: 3}
+  - {fileID: 4900000, guid: 382b7547a6056bf45aaa4de0d9343751, type: 3}
+  - {fileID: 4900000, guid: c36fdedb3b628e647b65c48b2c75bbc3, type: 3}
 --- !u!4 &1082046577
 Transform:
   m_ObjectHideFlags: 0
