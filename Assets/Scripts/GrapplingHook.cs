@@ -24,8 +24,6 @@ public class GrapplingHook : MonoBehaviour
     
     void Update ()
     {
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 100, Color.red);
-
         if (Input.GetMouseButtonDown(0))
         {
             Press();

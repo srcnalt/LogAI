@@ -10,12 +10,10 @@ public class LogManager : MonoBehaviour
 {
     #region Public variables
     public static LogManager instance;
-
-    public enum DrawMode { off, on, bounding_box_only, unit_cubes_only }
+    
     public enum RecorderState { idle, recording, replaying };
 
     [Header("System variables")]
-    public DrawMode drawMode = DrawMode.on;
     public RecorderState recorderState = RecorderState.idle;
     public Transform player;
     public Transform playerCamera;
@@ -151,10 +149,6 @@ public class LogManager : MonoBehaviour
                     Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation, line.cameraRotation, time / step);
                 }
 
-                //player rotation may not be needed
-                //player.rotation = Quaternion.Lerp(firstLog.playerRotation, line.playerRotation, time / step);
-
-                //Call the registered method
                 if(line.actionName != string.Empty)
                 {
                     Debug.Log("Invoked method...");
@@ -223,58 +217,6 @@ public class LogManager : MonoBehaviour
     void OnDrawGizmos()
     {
         DrawPathFromActiveRecording();
-
-        if (drawMode == DrawMode.off) return;
-
-        Vector3 currentActiveCube = new Vector3(
-            Mathf.Floor(player.position.x / unitSize),
-            Mathf.Floor(player.position.y / unitSize),
-            Mathf.Floor(player.position.z / unitSize)
-        );
-
-        Vector3 cubeCenter = new Vector3(
-            boundingBoxPivot.x + unitSize / 2 + currentActiveCube.x,
-            boundingBoxPivot.y + unitSize / 2 + currentActiveCube.y,
-            boundingBoxPivot.z + unitSize / 2 + currentActiveCube.z
-        );
-
-        if (previousActiveCube != currentActiveCube)
-        {
-            previousActiveCube = currentActiveCube;            
-        }
-
-        DrawBoundingBox();
-    }
-
-    private void DrawUnitCubes(bool isActiveCube, Vector3 cubeCenter)
-    {
-        if (drawMode == DrawMode.unit_cubes_only || drawMode != DrawMode.bounding_box_only)
-        {
-            if (isActiveCube)
-            {
-                Gizmos.color = activeCubeColor;
-                Gizmos.DrawCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
-            }
-            else
-            {
-                Gizmos.color = drawColor;
-                Gizmos.DrawWireCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
-            }
-        }
-    }
-
-    private void DrawBoundingBox()
-    {
-        if (drawMode == DrawMode.bounding_box_only || drawMode != DrawMode.unit_cubes_only)
-        {
-            Gizmos.color = new Color(1, 0, 0);
-            Gizmos.DrawSphere(boundingBoxPivot, 0.1f);
-
-            Vector3 boundingBoxCenter = new Vector3(boundingBoxPivot.x + boundingBoxSize.x / 2, boundingBoxPivot.y + boundingBoxSize.y / 2, boundingBoxPivot.z + boundingBoxSize.z / 2);
-
-            Gizmos.color = boundingBoxColor;
-            Gizmos.DrawWireCube(boundingBoxCenter, boundingBoxSize);
-        }
     }
 
     private void DrawPathFromActiveRecording()
