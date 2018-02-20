@@ -21,9 +21,11 @@ public class GrapplingHook : MonoBehaviour
         cam = Camera.main.transform;
         line = GetComponent<LineRenderer>();
     }
-    
-    void Update ()
+
+    void Update()
     {
+        LogManager.instance.action = ActionEnum.Idle;
+
         if (Input.GetMouseButtonDown(0))
         {
             Press();
@@ -46,13 +48,13 @@ public class GrapplingHook : MonoBehaviour
 
         if (Physics.Raycast(player.transform.position, Vector3.down, out hit, 2))
         {
-            LogManager.instance.state = State.OnGround;
+            LogManager.instance.state = StateEnum.OnGround;
         }
         else
         {
-            LogManager.instance.state = State.InAir;
+            LogManager.instance.state = StateEnum.InAir;
         }
-	}
+    }
 
     public void Press()
     {
@@ -65,8 +67,10 @@ public class GrapplingHook : MonoBehaviour
 
             targetPoint = hit.point;
         }
-        
-        LogManager.instance.Logger("Press", targetPoint);
+
+        LogManager.instance.action = ActionEnum.Press;
+
+        LogManager.instance.Logger(targetPoint);
     }
 
     public void Release()
@@ -74,7 +78,9 @@ public class GrapplingHook : MonoBehaviour
         hooked = false;
         line.enabled = false;
 
-        LogManager.instance.Logger("Release");
+        LogManager.instance.action = ActionEnum.Release;
+
+        LogManager.instance.Logger();
     }
 
     public void ConnectHook()

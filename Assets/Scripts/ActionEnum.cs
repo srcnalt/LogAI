@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
 [SerializeField]
-public enum Action
+public enum ActionEnum
 {
     Idle,
-    Pressb,
+    Press,
     Release
 }

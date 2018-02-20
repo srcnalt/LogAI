@@ -11,6 +11,7 @@ public class LogManagerEditor : Editor
     {
         DrawDefaultInspector();
 
+        /*
         LogManager lm = (LogManager)target;
 
         TextAsset[] test = Resources.LoadAll<TextAsset>("Logs/");
@@ -21,5 +22,6 @@ public class LogManagerEditor : Editor
         {
             
         }
+        */
     }
 }

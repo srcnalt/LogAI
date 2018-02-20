@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
 [SerializeField]
-public enum State  {
+public enum StateEnum
+{
     OnGround,
     InAir
 }

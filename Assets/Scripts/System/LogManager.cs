@@ -35,14 +35,17 @@ public class LogManager : MonoBehaviour
     [Header("Active Log")]
     public TextAsset activeLog;
     public bool drawPath;
-
     #endregion
 
     #region Private variables
-    private Vector3 currentActiveCube = new Vector3(0, 0, 0);
     private Vector3 previousActiveCube = new Vector3(0, 0, 0);
     private SessionLog sessionLog;
     private Dictionary<string, Action> actionList;
+
+    [HideInInspector]
+    public StateEnum state = StateEnum.OnGround;
+    [HideInInspector]
+    public ActionEnum action = ActionEnum.Idle;
     #endregion
 
     private void Awake()
@@ -106,7 +109,7 @@ public class LogManager : MonoBehaviour
 
         string json = JsonUtility.ToJson(sessionLog);
 
-        File.WriteAllText(Application.dataPath + "/Logs/session_log_" + sessionLog.sessionStart + ".json", json);
+        File.WriteAllText(Application.dataPath + "/Resources/Logs/session_log_" + sessionLog.sessionStart + ".json", json);
     }
 
     public void Replay()
@@ -149,10 +152,10 @@ public class LogManager : MonoBehaviour
                     Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation, line.cameraRotation, time / step);
                 }
 
-                if(line.actionName != string.Empty)
+                if(line.action != ActionEnum.Idle)
                 {
                     Debug.Log("Invoked method...");
-                    actionList[line.actionName].Invoke();
+                    actionList[line.action.ToString()].Invoke();
                 }
 
                 yield return null;
@@ -167,23 +170,18 @@ public class LogManager : MonoBehaviour
 
     public void Logger()
     {
-        Logger(null, Vector3.zero);
+        Logger(Vector3.zero);
     }
 
-    public void Logger(string actionName)
-    {
-        Logger(actionName, Vector3.zero);
-    }
-
-    public void Logger(string actionName, Vector3 lookAtPoint)
+    public void Logger(Vector3 lookAtPoint)
     {
         if (recorderState == RecorderState.recording)
         {
             LogLine logLine = new LogLine();
 
             logLine.time = Time.time;
-            logLine.stateName = null;
-            logLine.actionName = actionName;
+            logLine.state = state;
+            logLine.action = action;
             logLine.playerPosition = player.position;
             logLine.cameraRotation = playerCamera.rotation;
             logLine.lookAtPoint = lookAtPoint;
@@ -206,7 +204,7 @@ public class LogManager : MonoBehaviour
 
             Debug.Log("logged");
 
-            Logger(null);
+            Logger();
         }
     }
 
@@ -229,8 +227,8 @@ public class LogManager : MonoBehaviour
             {
                 Gizmos.color = Color.white;
 
-                if (logs[i + 1].actionName != string.Empty)
-                    Handles.Label(logs[i + 1].playerPosition, logs[i + 1].actionName);
+                if (logs[i + 1].action != ActionEnum.Idle)
+                    Handles.Label(logs[i + 1].playerPosition, logs[i + 1].action.ToString());
                 else
                     Gizmos.DrawSphere(logs[i + 1].playerPosition, 0.1f);
 

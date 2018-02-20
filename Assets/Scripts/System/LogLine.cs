@@ -5,8 +5,8 @@ using UnityEngine;
 public class LogLine
 {
     public float  time;
-    public State state;
-    public Action action;
+    public StateEnum state;
+    public ActionEnum action;
 
     public Vector3 playerPosition;
     public Quaternion cameraRotation;
