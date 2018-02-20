@@ -9,6 +9,6 @@ public class LogLine
     public string actionName;
 
     public Vector3 playerPosition;
-    public Quaternion playerRotation;
     public Quaternion cameraRotation;
+    public Vector3 lookAtPoint;
 }

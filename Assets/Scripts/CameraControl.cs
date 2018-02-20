@@ -13,12 +13,15 @@ public class CameraControl : MonoBehaviour
 
 	void Update ()
     {
-        rotationX += Input.GetAxis("Mouse X") * sensitivity;
-        rotationY -= Input.GetAxis("Mouse Y") * sensitivity;
-        rotationY = Mathf.Clamp(rotationY, maxAngles.x, maxAngles.y);
+        if (LogManager.instance.recorderState != LogManager.RecorderState.replaying)
+        {
+            rotationX += Input.GetAxis("Mouse X") * sensitivity;
+            rotationY -= Input.GetAxis("Mouse Y") * sensitivity;
+            rotationY = Mathf.Clamp(rotationY, maxAngles.x, maxAngles.y);
 
-        Quaternion targetRotation = Quaternion.Euler(new Vector3(rotationY, rotationX, 0.0f));
-        transform.rotation = targetRotation;
+            Quaternion targetRotation = Quaternion.Euler(new Vector3(rotationY, rotationX, 0.0f));
+            transform.rotation = targetRotation;
+        }
 
         transform.position = cameraPinPoint.position;
     }
