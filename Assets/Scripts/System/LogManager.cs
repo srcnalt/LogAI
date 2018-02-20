@@ -129,7 +129,7 @@ public class LogManager : MonoBehaviour
     IEnumerator PlayRecordingSteps(List<LogLine> logLines)
     {
         float oldTime = 0;
-        LogLine firstLog = logLines[0];
+        LogLine previousLog = logLines[0];
         logLines.RemoveAt(0);
 
         foreach (LogLine line in logLines)
@@ -141,10 +141,18 @@ public class LogManager : MonoBehaviour
             {
                 time += Time.deltaTime;
 
-                //Shut position changing leave it to physics
-                //player.position = Vector3.Lerp(firstLog.playerPosition, line.playerPosition, time / step);
-                player.rotation = Quaternion.Lerp(firstLog.playerRotation, line.playerRotation, time / step);
-                Camera.main.transform.rotation = Quaternion.Lerp(firstLog.cameraRotation, line.cameraRotation, time / step);
+                if (line.lookAtPoint != Vector3.zero)
+                {
+                    Debug.DrawLine(Camera.main.transform.position, line.lookAtPoint);
+                    Camera.main.transform.LookAt(line.lookAtPoint);
+                }
+                else
+                {
+                    Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation, line.cameraRotation, time / step);
+                }
+
+                //player rotation may not be needed
+                //player.rotation = Quaternion.Lerp(firstLog.playerRotation, line.playerRotation, time / step);
 
                 //Call the registered method
                 if(line.actionName != string.Empty)
@@ -157,18 +165,23 @@ public class LogManager : MonoBehaviour
             }
 
             oldTime = line.time;
-            firstLog = line;
+            previousLog = line;
         }
 
         Debug.Log("Replay ended...");
     }
 
-    private void Logger()
+    public void Logger()
     {
-        Logger(null);
+        Logger(null, Vector3.zero);
     }
 
     public void Logger(string actionName)
+    {
+        Logger(actionName, Vector3.zero);
+    }
+
+    public void Logger(string actionName, Vector3 lookAtPoint)
     {
         if (recorderState == RecorderState.recording)
         {
@@ -178,8 +191,8 @@ public class LogManager : MonoBehaviour
             logLine.stateName = null;
             logLine.actionName = actionName;
             logLine.playerPosition = player.position;
-            logLine.playerRotation = player.rotation;
             logLine.cameraRotation = playerCamera.rotation;
+            logLine.lookAtPoint = lookAtPoint;
 
             sessionLog.logs.Add(logLine);
         }
@@ -278,6 +291,12 @@ public class LogManager : MonoBehaviour
                     Handles.Label(logs[i + 1].playerPosition, logs[i + 1].actionName);
                 else
                     Gizmos.DrawSphere(logs[i + 1].playerPosition, 0.1f);
+
+                if (logs[i + 1].lookAtPoint != Vector3.zero)
+                {
+                    Gizmos.color = Color.black;
+                    Gizmos.DrawSphere(logs[i + 1].lookAtPoint, 0.5f);
+                }
 
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawLine(logs[i].playerPosition, logs[i + 1].playerPosition);
