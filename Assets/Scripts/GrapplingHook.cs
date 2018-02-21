@@ -44,7 +44,7 @@ public class GrapplingHook : MonoBehaviour
         //Player state check
         RaycastHit hit = new RaycastHit();
 
-        Debug.DrawRay(player.transform.position, Vector3.down * 2, Color.red);
+        Debug.DrawRay(player.transform.position, Vector3.down, Color.red);
 
         if (Physics.Raycast(player.transform.position, Vector3.down, out hit, 2))
         {

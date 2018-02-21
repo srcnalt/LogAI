@@ -129,22 +129,27 @@ public class LogManager : MonoBehaviour
     
     IEnumerator PlayRecordingSteps(List<LogLine> logLines)
     {
+        //
+
         float oldTime = 0;
         LogLine previousLog = logLines[0];
         logLines.RemoveAt(0);
+
+        bool invoked = false;
 
         foreach (LogLine line in logLines)
         {
             float time = 0;
             float step = line.time - oldTime;
 
-            while (time <= step)
+            Debug.DrawLine(line.playerPosition, line.playerPosition + Vector3.one, Color.red);
+
+            while (time < step)
             {
                 time += Time.deltaTime;
 
                 if (line.lookAtPoint != Vector3.zero)
                 {
-                    Debug.DrawLine(Camera.main.transform.position, line.lookAtPoint);
                     Camera.main.transform.LookAt(line.lookAtPoint);
                 }
                 else
@@ -152,20 +157,20 @@ public class LogManager : MonoBehaviour
                     Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation, line.cameraRotation, time / step);
                 }
 
-                if(line.action != ActionEnum.Idle)
+                if(line.action != ActionEnum.Idle && !invoked)
                 {
-                    Debug.Log("Invoked method...");
+                    Debug.DrawLine(line.playerPosition, line.playerPosition + Vector3.one, Color.green);
+                    invoked = true;
                     actionList[line.action.ToString()].Invoke();
                 }
 
                 yield return null;
             }
 
+            invoked = false;
             oldTime = line.time;
             previousLog = line;
         }
-
-        Debug.Log("Replay ended...");
     }
 
     public void Logger()
@@ -225,7 +230,7 @@ public class LogManager : MonoBehaviour
 
             for (int i = 0; i < logs.Count - 1; i++)
             {
-                Gizmos.color = Color.white;
+                Gizmos.color = Color.black;
 
                 if (logs[i + 1].action != ActionEnum.Idle)
                     Handles.Label(logs[i + 1].playerPosition, logs[i + 1].action.ToString());
