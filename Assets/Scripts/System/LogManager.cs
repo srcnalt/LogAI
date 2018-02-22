@@ -44,6 +44,8 @@ public class LogManager : MonoBehaviour
     private LogSection logSection;
     private Dictionary<string, Action> actionList;
 
+    private bool agentIsActive;
+
     private List<LogLine> activeLogLines = new List<LogLine>();
     
     [HideInInspector]
@@ -92,6 +94,11 @@ public class LogManager : MonoBehaviour
         {
             Replay();
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            PlayAgent();
+        }
     }
 
     public void Record()
@@ -124,6 +131,18 @@ public class LogManager : MonoBehaviour
         recorderState = RecorderState.replaying;
         
         StartCoroutine(PlayRecordingSteps());
+    }
+
+    public void PlayAgent()
+    {
+        agentIsActive = !agentIsActive;
+
+        if (agentIsActive)
+        {
+            Vector3 currentSector = GetSector();
+
+            //TODO: implement this part after log batch 
+        }
     }
     
     IEnumerator PlayRecordingSteps()
