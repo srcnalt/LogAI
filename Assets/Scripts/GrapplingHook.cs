@@ -6,6 +6,7 @@ public class GrapplingHook : MonoBehaviour
 {
     public GameObject player;
     public float speed;
+    public Transform hitBall;
 
     private Transform cam;
     private LineRenderer line;
@@ -44,8 +45,6 @@ public class GrapplingHook : MonoBehaviour
         //Player state check
         RaycastHit hit = new RaycastHit();
 
-        Debug.DrawRay(player.transform.position, Vector3.down, Color.red);
-
         if (Physics.Raycast(player.transform.position, Vector3.down, out hit, 2))
         {
             LogManager.instance.state = StateEnum.OnGround;
@@ -54,13 +53,22 @@ public class GrapplingHook : MonoBehaviour
         {
             LogManager.instance.state = StateEnum.InAir;
         }
+
+        if (!hooked && Physics.Raycast(cam.position, cam.forward, out hit, 50))
+        {
+            hitBall.position = hit.point;
+        }
+        else
+        {
+            hitBall.position = player.transform.position;
+        }
     }
 
     public void Press()
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(cam.position, cam.forward, out hit, 100))
+        if (Physics.Raycast(cam.position, cam.forward, out hit, 50))
         {
             hooked = true;
             line.enabled = true;
