@@ -34,6 +34,7 @@ public class LogManager : MonoBehaviour
 
     [Header("Active Log")]
     public TextAsset activeLog;
+    public LogBatch activeBatch;
     public bool drawPath;
     #endregion
 

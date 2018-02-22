@@ -750,7 +750,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &420633115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1084,6 +1084,8 @@ MonoBehaviour:
   boundingBoxPivot: {x: -22.5, y: 1, z: -50}
   boundingBoxColor: {r: 0.07586217, g: 1, b: 0, a: 1}
   activeLog: {fileID: 4900000, guid: f42e32dc6c292ea4bb4ebdb1bbdb4b12, type: 3}
+  activeBatch:
+    mapName: TestMap
   drawPath: 1
   state: 0
   previousState: 1
@@ -1486,7 +1488,7 @@ GameObject:
   - component: {fileID: 1700032069}
   - component: {fileID: 1700032068}
   - component: {fileID: 1700032067}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
