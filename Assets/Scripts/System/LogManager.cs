@@ -139,7 +139,7 @@ public class LogManager : MonoBehaviour
 
         if (agentIsActive)
         {
-            Vector3 currentSector = GetSector();
+            Point3 currentSector = GetSector();
 
             //TODO: implement this part after log batch 
         }
@@ -169,13 +169,13 @@ public class LogManager : MonoBehaviour
                     actionList[line.action.ToString()].Invoke();
                 }
 
-                if (line.lookAtPoint != Vector3.zero)
+                if (line.lookAtPoint.Vector3 != Vector3.zero)
                 {
-                    Camera.main.transform.LookAt(line.lookAtPoint);
+                    Camera.main.transform.LookAt(line.lookAtPoint.Vector3);
                 }
                 else
                 {
-                    Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation, line.cameraRotation, time / step);
+                    Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation.Quaternion, line.cameraRotation.Quaternion, time / step);
                 }
                 
                 yield return null;
@@ -212,9 +212,9 @@ public class LogManager : MonoBehaviour
             logLine.time = Time.time;
             logLine.state = state;
             logLine.action = action;
-            logLine.playerPosition = player.position;
-            logLine.cameraRotation = playerCamera.rotation;
-            logLine.lookAtPoint = lookAtPoint;
+            logLine.playerPosition = Point3.ToPoint(player.position);
+            logLine.cameraRotation = Rotation4.ToRotation(playerCamera.rotation);
+            logLine.lookAtPoint = Point3.ToPoint(lookAtPoint);
 
             logSection.logLines.Add(logLine);
 
@@ -297,18 +297,18 @@ public class LogManager : MonoBehaviour
                 Gizmos.color = Color.black;
 
                 if (activeLogLines[i + 1].action != ActionEnum.Idle)
-                    Handles.Label(activeLogLines[i + 1].playerPosition, activeLogLines[i + 1].action.ToString());
+                    Handles.Label(activeLogLines[i + 1].playerPosition.Vector3, activeLogLines[i + 1].action.ToString());
                 else
-                    Gizmos.DrawSphere(activeLogLines[i + 1].playerPosition, 0.1f);
+                    Gizmos.DrawSphere(activeLogLines[i + 1].playerPosition.Vector3, 0.1f);
 
-                if (activeLogLines[i + 1].lookAtPoint != Vector3.zero)
+                if (activeLogLines[i + 1].lookAtPoint.Vector3 != Vector3.zero)
                 {
                     Gizmos.color = Color.black;
-                    Gizmos.DrawSphere(activeLogLines[i + 1].lookAtPoint, 0.5f);
+                    Gizmos.DrawSphere(activeLogLines[i + 1].lookAtPoint.Vector3, 0.5f);
                 }
 
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawLine(activeLogLines[i].playerPosition, activeLogLines[i + 1].playerPosition);
+                Gizmos.DrawLine(activeLogLines[i].playerPosition.Vector3, activeLogLines[i + 1].playerPosition.Vector3);
             }
         }
     }
@@ -338,9 +338,9 @@ public class LogManager : MonoBehaviour
         return false;
     }
 
-    private Vector3 GetSector()
+    private Point3 GetSector()
     {
-        return new Vector3(
+        return new Point3(
             Mathf.Floor(player.position.x / unitSize),
             Mathf.Floor(player.position.y / unitSize),
             Mathf.Floor(player.position.z / unitSize)

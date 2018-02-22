@@ -1083,7 +1083,7 @@ MonoBehaviour:
   boundingBoxSize: {x: 45, y: 75, z: 105}
   boundingBoxPivot: {x: -22.5, y: 1, z: -50}
   boundingBoxColor: {r: 0.07586217, g: 1, b: 0, a: 1}
-  activeLog: {fileID: 4900000, guid: 0668478d00e1dc547951b47d7aa4b513, type: 3}
+  activeLog: {fileID: 4900000, guid: f42e32dc6c292ea4bb4ebdb1bbdb4b12, type: 3}
   drawPath: 1
   state: 0
   previousState: 1

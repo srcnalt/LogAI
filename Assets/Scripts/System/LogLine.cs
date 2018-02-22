@@ -8,7 +8,7 @@ public class LogLine
     public StateEnum state;
     public ActionEnum action;
 
-    public Vector3 playerPosition;
-    public Quaternion cameraRotation;
-    public Vector3 lookAtPoint;
+    public Point3 playerPosition;
+    public Rotation4 cameraRotation;
+    public Point3 lookAtPoint;
 }
