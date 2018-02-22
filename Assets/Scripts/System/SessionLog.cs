@@ -7,13 +7,13 @@ public class SessionLog
     public string sessionStart;
     public string sessionEnd;
     public string mapName;
-    public List<LogLine> logs;
+    public List<LogSection> logSections;
 
     public SessionLog(string sessionStart, string mapName)
     {
         this.sessionStart = sessionStart;
         this.sessionEnd = "";
         this.mapName = mapName;
-        this.logs = new List<LogLine>();
+        this.logSections = new List<LogSection>();
     }
 }

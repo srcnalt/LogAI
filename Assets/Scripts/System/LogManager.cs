@@ -135,9 +135,7 @@ public class LogManager : MonoBehaviour
         {
             float time = 0;
             float step = line.time - oldTime;
-
-            Debug.DrawLine(line.playerPosition, line.playerPosition + Vector3.one, Color.red);
-
+            
             while (time < step)
             {
                 time += Time.deltaTime;
