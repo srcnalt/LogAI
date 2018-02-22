@@ -20,9 +20,9 @@ public class LogManager : MonoBehaviour
     public GrapplingHook grapplingHook;
     public Transform spawnPoint;
     public float loggerTick;
+    public bool debugSections;
 
     [Header("Unit Cube Variables")]
-    [Range(1, 5)]
     public float unitSize;
     public Color drawColor;
     public Color activeCubeColor;
@@ -39,9 +39,10 @@ public class LogManager : MonoBehaviour
 
     #region Private variables
     private Vector3 previousActiveCube = new Vector3(0, 0, 0);
+    private Vector3 currentActiveCube;
     private SessionLog sessionLog;
     private Dictionary<string, Action> actionList;
-
+    
     [HideInInspector]
     public StateEnum state = StateEnum.OnGround;
     [HideInInspector]
@@ -84,11 +85,6 @@ public class LogManager : MonoBehaviour
         {
             Replay();
         }
-
-        if(recorderState == RecorderState.recording)
-        {
-            //InsertLogByUnitChange();
-        }
     }
 
     public void Record()
@@ -129,8 +125,6 @@ public class LogManager : MonoBehaviour
     
     IEnumerator PlayRecordingSteps(List<LogLine> logLines)
     {
-        //
-
         float oldTime = 0;
         LogLine previousLog = logLines[0];
         logLines.RemoveAt(0);
@@ -148,6 +142,11 @@ public class LogManager : MonoBehaviour
             {
                 time += Time.deltaTime;
 
+                if (line.action != ActionEnum.Idle && !invoked)
+                {
+                    actionList[line.action.ToString()].Invoke();
+                }
+
                 if (line.lookAtPoint != Vector3.zero)
                 {
                     Camera.main.transform.LookAt(line.lookAtPoint);
@@ -156,14 +155,7 @@ public class LogManager : MonoBehaviour
                 {
                     Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation, line.cameraRotation, time / step);
                 }
-
-                if(line.action != ActionEnum.Idle && !invoked)
-                {
-                    Debug.DrawLine(line.playerPosition, line.playerPosition + Vector3.one, Color.green);
-                    invoked = true;
-                    actionList[line.action.ToString()].Invoke();
-                }
-
+                
                 yield return null;
             }
 
@@ -187,6 +179,7 @@ public class LogManager : MonoBehaviour
             logLine.time = Time.time;
             logLine.state = state;
             logLine.action = action;
+            logLine.sector = GetSector();
             logLine.playerPosition = player.position;
             logLine.cameraRotation = playerCamera.rotation;
             logLine.lookAtPoint = lookAtPoint;
@@ -195,31 +188,68 @@ public class LogManager : MonoBehaviour
         }
     }
 
-    private void InsertLogByUnitChange()
-    {
-        Vector3 currentActiveCube = new Vector3(
-            Mathf.Floor(player.position.x / unitSize),
-            Mathf.Floor(player.position.y / unitSize),
-            Mathf.Floor(player.position.z / unitSize)
-        );
-
-        if (previousActiveCube != currentActiveCube)
-        {
-            previousActiveCube = currentActiveCube;
-
-            Debug.Log("logged");
-
-            Logger();
-        }
-    }
-
     #region Visual Debug Methods
 
     //TODO: Add only active box
 
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         DrawPathFromActiveRecording();
+
+        if (debugSections)
+        {
+            DrawBoundingBox();
+            DrawUnitCubes();
+        }
+    }
+
+    private void DrawBoundingBox()
+    {
+        Gizmos.color = new Color(1, 0, 0);
+        Gizmos.DrawSphere(boundingBoxPivot, 0.1f);
+
+        Vector3 boundingBoxCenter = new Vector3(boundingBoxPivot.x + boundingBoxSize.x / 2, boundingBoxPivot.y + boundingBoxSize.y / 2, boundingBoxPivot.z + boundingBoxSize.z / 2);
+
+        Gizmos.color = boundingBoxColor;
+        Gizmos.DrawWireCube(boundingBoxCenter, boundingBoxSize);
+    }
+
+    private void DrawUnitCubes()
+    {
+        for (float x = 0; x < boundingBoxSize.x; x += unitSize)
+        {
+            for (float y = 0; y < boundingBoxSize.y; y += unitSize)
+            {
+                for (float z = 0; z < boundingBoxSize.z; z += unitSize)
+                {
+                    Vector3 cubeCenter = new Vector3(boundingBoxPivot.x + unitSize / 2 + x,
+                                                     boundingBoxPivot.y + unitSize / 2 + y,
+                                                     boundingBoxPivot.z + unitSize / 2 + z);
+
+                    bool isActiveCube = IsPlayerInTheBox(new Vector3(x, y, z));
+
+                    if (isActiveCube)
+                    {
+                        currentActiveCube = new Vector3(x, y, z);
+
+                        Gizmos.color = activeCubeColor;
+                        Gizmos.DrawCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+                    }
+                    else
+                    {
+                        Gizmos.color = drawColor;
+                        Gizmos.DrawWireCube(cubeCenter, new Vector3(unitSize, unitSize, unitSize));
+                    }
+                }
+            }
+        }
+
+        if (currentActiveCube != previousActiveCube)
+        {
+            Logger();
+
+            previousActiveCube = currentActiveCube;
+        }
     }
 
     private void DrawPathFromActiveRecording()
@@ -249,7 +279,7 @@ public class LogManager : MonoBehaviour
         }
     }
 
-    bool IsPlayerInTheBox(Vector3 cubeIndex)
+    private bool IsPlayerInTheBox(Vector3 cubeIndex)
     {
         Vector3 pos = player.position;
 
@@ -263,5 +293,14 @@ public class LogManager : MonoBehaviour
         return false;
     }
 
+    private Vector3 GetSector()
+    {
+        return new Vector3(
+            Mathf.Floor(player.position.x / unitSize),
+            Mathf.Floor(player.position.y / unitSize),
+            Mathf.Floor(player.position.z / unitSize)
+        );
+    }
+    
     #endregion
 }
