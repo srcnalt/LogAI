@@ -6,5 +6,5 @@ using UnityEngine;
 public class LogSection
 {
     public Vector3 sector;
-    public List<LogLine> logLines;
+    public List<LogLine> logLines = new List<LogLine>();
 }

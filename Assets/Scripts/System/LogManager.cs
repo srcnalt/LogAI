@@ -41,10 +41,15 @@ public class LogManager : MonoBehaviour
     private Vector3 previousActiveCube = new Vector3(0, 0, 0);
     private Vector3 currentActiveCube;
     private SessionLog sessionLog;
+    private LogSection logSection;
     private Dictionary<string, Action> actionList;
+
+    private List<LogLine> activeLogLines = new List<LogLine>();
     
     [HideInInspector]
     public StateEnum state = StateEnum.OnGround;
+    [HideInInspector]
+    public StateEnum previousState;
     [HideInInspector]
     public ActionEnum action = ActionEnum.Idle;
     #endregion
@@ -65,6 +70,8 @@ public class LogManager : MonoBehaviour
         actionList.Add("Release", grapplingHook.Release);
 
         player.position = spawnPoint.position;
+
+        previousState = StateEnum.InAir;
     }
 
     private void Update()
@@ -115,16 +122,14 @@ public class LogManager : MonoBehaviour
         player.position = spawnPoint.position;
 
         recorderState = RecorderState.replaying;
-
-        //TODO: replay
-
-        SessionLog replaySession = JsonUtility.FromJson<SessionLog>(activeLog.text);
-
-        StartCoroutine(PlayRecordingSteps(replaySession.logs));
+        
+        StartCoroutine(PlayRecordingSteps());
     }
     
-    IEnumerator PlayRecordingSteps(List<LogLine> logLines)
+    IEnumerator PlayRecordingSteps()
     {
+        List<LogLine> logLines = activeLogLines;
+
         float oldTime = 0;
         LogLine previousLog = logLines[0];
         logLines.RemoveAt(0);
@@ -172,17 +177,29 @@ public class LogManager : MonoBehaviour
     {
         if (recorderState == RecorderState.recording)
         {
+            if (previousState == StateEnum.InAir && state == StateEnum.OnGround)
+            {
+                //filled log section inserted into session, and skip if just started recording
+                if (logSection != null)
+                    sessionLog.logSections.Add(logSection);
+
+                //clear old data for new ones
+                logSection = new LogSection();
+                logSection.sector = GetSector();
+            }
+
             LogLine logLine = new LogLine();
 
             logLine.time = Time.time;
             logLine.state = state;
             logLine.action = action;
-            logLine.sector = GetSector();
             logLine.playerPosition = player.position;
             logLine.cameraRotation = playerCamera.rotation;
             logLine.lookAtPoint = lookAtPoint;
 
-            sessionLog.logs.Add(logLine);
+            logSection.logLines.Add(logLine);
+
+            previousState = state;
         }
     }
 
@@ -254,26 +271,37 @@ public class LogManager : MonoBehaviour
     {
         if (drawPath && activeLog)
         {
-            List<LogLine> logs = JsonUtility.FromJson<SessionLog>(activeLog.text).logs;
+            GetLogsToDraw();
 
-            for (int i = 0; i < logs.Count - 1; i++)
+            for (int i = 0; i < activeLogLines.Count - 1; i++)
             {
                 Gizmos.color = Color.black;
 
-                if (logs[i + 1].action != ActionEnum.Idle)
-                    Handles.Label(logs[i + 1].playerPosition, logs[i + 1].action.ToString());
+                if (activeLogLines[i + 1].action != ActionEnum.Idle)
+                    Handles.Label(activeLogLines[i + 1].playerPosition, activeLogLines[i + 1].action.ToString());
                 else
-                    Gizmos.DrawSphere(logs[i + 1].playerPosition, 0.1f);
+                    Gizmos.DrawSphere(activeLogLines[i + 1].playerPosition, 0.1f);
 
-                if (logs[i + 1].lookAtPoint != Vector3.zero)
+                if (activeLogLines[i + 1].lookAtPoint != Vector3.zero)
                 {
                     Gizmos.color = Color.black;
-                    Gizmos.DrawSphere(logs[i + 1].lookAtPoint, 0.5f);
+                    Gizmos.DrawSphere(activeLogLines[i + 1].lookAtPoint, 0.5f);
                 }
 
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawLine(logs[i].playerPosition, logs[i + 1].playerPosition);
+                Gizmos.DrawLine(activeLogLines[i].playerPosition, activeLogLines[i + 1].playerPosition);
             }
+        }
+    }
+
+    private void GetLogsToDraw()
+    {
+        List<LogSection> logSections = JsonUtility.FromJson<SessionLog>(activeLog.text).logSections;
+        activeLogLines = new List<LogLine>();
+
+        foreach (LogSection ls in logSections)
+        {
+            activeLogLines.AddRange(ls.logLines);
         }
     }
 
