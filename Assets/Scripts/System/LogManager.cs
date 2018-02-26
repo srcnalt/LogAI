@@ -125,8 +125,6 @@ public class LogManager : MonoBehaviour
 
     public void Replay()
     {
-        Debug.Log("Replaying...");
-
         player.position = spawnPoint.position;
 
         recorderState = RecorderState.replaying;
@@ -186,6 +184,8 @@ public class LogManager : MonoBehaviour
             oldTime = line.time;
             previousLog = line;
         }
+
+        recorderState = RecorderState.idle;
     }
 
     public void Logger()
