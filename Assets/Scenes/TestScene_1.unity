@@ -1076,7 +1076,7 @@ MonoBehaviour:
   grapplingHook: {fileID: 2042123776}
   spawnPoint: {fileID: 26072919}
   loggerTick: 0.3
-  debugSections: 1
+  debugSections: 0
   unitSize: 15
   drawColor: {r: 1, g: 0, b: 0, a: 0.166}
   activeCubeColor: {r: 1, g: 0.8482759, b: 0, a: 0.459}
@@ -1086,7 +1086,7 @@ MonoBehaviour:
   activeLog: {fileID: 4900000, guid: f42e32dc6c292ea4bb4ebdb1bbdb4b12, type: 3}
   activeBatch:
     mapName: TestMap
-  drawPath: 1
+  drawPath: 0
   state: 0
   previousState: 1
   action: 0

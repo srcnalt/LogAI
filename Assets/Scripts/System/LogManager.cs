@@ -34,6 +34,7 @@ public class LogManager : MonoBehaviour
 
     [Header("Active Log")]
     public TextAsset activeLog;
+    [HideInInspector]
     public LogBatch activeBatch;
     public bool drawPath;
     #endregion
@@ -138,9 +139,74 @@ public class LogManager : MonoBehaviour
 
         if (agentIsActive)
         {
-            Point3 currentSector = GetSector();
+            Debug.Log("Play agent");
 
-            //TODO: implement this part after log batch 
+            recorderState = RecorderState.replaying;
+
+            StopAllCoroutines();
+
+            player.position = spawnPoint.position;
+
+            StartCoroutine(PlayAgentSteps());
+        }
+        else
+        {
+            recorderState = RecorderState.idle;
+        }
+    }
+
+    IEnumerator PlayAgentSteps()
+    {
+        Point3 currentSector = GetSector();
+
+        Debug.Log("Current Sector: " + currentSector.ToString());
+        Debug.Log("Is found? - " + activeBatch.logSectionDictionary.ContainsKey(currentSector));
+        
+        while (activeBatch.logSectionDictionary.ContainsKey(currentSector))
+        {
+            List<LogSection> logSectionList = activeBatch.logSectionDictionary[currentSector];
+            List<LogLine> randomLogSection = logSectionList[UnityEngine.Random.Range(0, logSectionList.Count)].logLines;
+
+            float oldTime = 0;
+            LogLine previousLog = randomLogSection[0];
+            randomLogSection.RemoveAt(0);
+
+            bool invoked = false;
+
+            foreach (LogLine line in randomLogSection)
+            {
+                float time = 0;
+                float step = line.time - oldTime;
+
+                while (time < step)
+                {
+                    time += Time.deltaTime;
+
+                    if (line.action != ActionEnum.Idle && !invoked)
+                    {
+                        actionList[line.action.ToString()].Invoke();
+                    }
+
+                    if (line.lookAtPoint.Vector3 != Vector3.zero)
+                    {
+                        Camera.main.transform.LookAt(line.lookAtPoint.Vector3);
+                    }
+                    else
+                    {
+                        Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation.Quaternion, line.cameraRotation.Quaternion, time / step);
+                    }
+
+                    yield return null;
+                }
+
+                invoked = false;
+                oldTime = line.time;
+                previousLog = line;
+            }
+
+            currentSector = GetSector();
+
+            Debug.Log("Current Sector: " + currentSector);
         }
     }
     

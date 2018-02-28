@@ -1,19 +1,13 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 [Serializable]
-public class Point3
+public struct Point3
 {
     public float x;
     public float y;
     public float z;
-
-    public Point3()
-    {
-        x = 0;
-        y = 0;
-        z = 0;
-    }
 
     public Point3(float x, float y, float z)
     {
@@ -43,5 +37,27 @@ public class Point3
     public static Vector3 ToVector(Point3 s)
     {
         return new Vector3(s.x, s.y, s.z);
+    }
+
+    public override string ToString()
+    {
+        return "[" + x + ", " + y + ", " + z + "]";
+    }
+
+    public override bool Equals(object o)
+    {
+        //return false if type mismatch
+        if (o == null || GetType() != o.GetType())
+            return false;
+
+        //cast to point3
+        Point3 p = (Point3)o;
+
+        return p.x == x && p.y == y && p.z == z;
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
     }
 }

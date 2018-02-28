@@ -12,7 +12,7 @@ public class LogManagerEditor : Editor
     private int index = 0;
     private FileInfo[] paths;
     private LogManager logManager;
-
+    
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
