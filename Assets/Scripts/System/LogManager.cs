@@ -139,19 +139,17 @@ public class LogManager : MonoBehaviour
 
         if (agentIsActive)
         {
-            Debug.Log("Play agent");
-
             recorderState = RecorderState.replaying;
-
-            StopAllCoroutines();
-
-            player.position = spawnPoint.position;
-
             StartCoroutine(PlayAgentSteps());
         }
         else
         {
+            StopAllCoroutines();
+            player.GetComponent<Rigidbody>().isKinematic = true;
+            grapplingHook.hooked = false;
+            player.position = spawnPoint.position;
             recorderState = RecorderState.idle;
+            player.GetComponent<Rigidbody>().isKinematic = false;
         }
     }
 
