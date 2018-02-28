@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 26072919}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
@@ -1086,7 +1086,7 @@ MonoBehaviour:
   activeLog: {fileID: 4900000, guid: f42e32dc6c292ea4bb4ebdb1bbdb4b12, type: 3}
   activeBatch:
     mapName: TestMap
-  drawPath: 0
+  drawPath: 1
   state: 0
   previousState: 1
   action: 0
@@ -1488,7 +1488,7 @@ GameObject:
   - component: {fileID: 1700032069}
   - component: {fileID: 1700032068}
   - component: {fileID: 1700032067}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}

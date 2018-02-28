@@ -12,7 +12,7 @@ public class LogManagerEditor : Editor
     private int index = 0;
     private FileInfo[] paths;
     private LogManager logManager;
-    
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
@@ -38,10 +38,11 @@ public class LogManagerEditor : Editor
                 options.Add(path.Name);
             }
         }
-
+        
         index = EditorGUILayout.Popup(index, options.ToArray());
 
-        if (GUI.changed)
+        //if gui changed or activeBatch is empty try loading
+        if (GUI.changed || logManager.activeBatch.logSectionDictionary.Count == 0)
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(paths[index].FullName, FileMode.Open);
