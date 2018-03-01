@@ -6,6 +6,7 @@ public class GrapplingHook : MonoBehaviour
 {
     public GameObject player;
     public float speed;
+    public float minDistance;
     public Transform hitBall;
 
     private Transform cam;
@@ -96,9 +97,13 @@ public class GrapplingHook : MonoBehaviour
         line.SetPosition(0, transform.position);
         line.SetPosition(1, targetPoint);
 
-        if (Vector3.Distance(transform.position, targetPoint) > 1)
+        if (Vector3.Distance(transform.position, targetPoint) > minDistance)
         {
             player.GetComponent<Rigidbody>().velocity = (targetPoint - transform.position).normalized * speed;
+        }
+        else
+        {
+            player.GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
     }
 }
