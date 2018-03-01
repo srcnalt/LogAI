@@ -161,15 +161,16 @@ public class LogManager : MonoBehaviour
 
         Debug.Log("Current Sector: " + currentSector.ToString());
         Debug.Log("Is found? - " + activeBatch.logSectionDictionary.ContainsKey(currentSector));
-        
+
         while (activeBatch.logSectionDictionary.ContainsKey(currentSector))
         {
             List<LogSection> logSectionList = activeBatch.logSectionDictionary[currentSector];
             List<LogLine> randomLogSection = logSectionList[UnityEngine.Random.Range(0, logSectionList.Count)].logLines;
 
-            float oldTime = 0;
             LogLine previousLog = randomLogSection[0];
             randomLogSection.RemoveAt(0);
+
+            float oldTime = previousLog.time;
 
             bool invoked = false;
 

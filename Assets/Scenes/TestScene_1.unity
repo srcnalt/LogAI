@@ -574,7 +574,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!1 &325463018
 GameObject:
@@ -1075,7 +1075,7 @@ MonoBehaviour:
   playerCamera: {fileID: 425328029}
   grapplingHook: {fileID: 2042123776}
   spawnPoint: {fileID: 26072919}
-  loggerTick: 0.3
+  loggerTick: 0.2
   debugSections: 0
   unitSize: 15
   drawColor: {r: 1, g: 0, b: 0, a: 0.166}
@@ -1083,7 +1083,7 @@ MonoBehaviour:
   boundingBoxSize: {x: 45, y: 75, z: 105}
   boundingBoxPivot: {x: -22.5, y: 1, z: -50}
   boundingBoxColor: {r: 0.07586217, g: 1, b: 0, a: 1}
-  activeLog: {fileID: 4900000, guid: 8488b4f57677e0740940dde403d64cda, type: 3}
+  activeLog: {fileID: 4900000, guid: 5edcd45d4d91c14489c583675791fbcf, type: 3}
   activeBatch:
     mapName: TestMap
   drawPath: 1
@@ -1779,6 +1779,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 217995170}
   speed: 20
+  minDistance: 2
   hitBall: {fileID: 445197273}
   hooked: 0
 --- !u!120 &2042123777
