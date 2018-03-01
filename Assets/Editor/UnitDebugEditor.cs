@@ -20,6 +20,11 @@ public class LogManagerEditor : Editor
 
         logManager = (LogManager)target;
 
+        if (!logManager.activeLog)
+        {
+            EditorGUILayout.HelpBox("There is no active log...", MessageType.Error);
+        }
+        
         EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Active batch");
             BatchDropDown();
@@ -54,11 +59,11 @@ public class LogManagerEditor : Editor
 
                 file.Dispose();
             }
-            catch (Exception e)
+            catch
             {
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.HelpBox("No log batch found...", MessageType.Info);
+                EditorGUILayout.HelpBox("No log batch found...", MessageType.Error);
             }
         }
     }
