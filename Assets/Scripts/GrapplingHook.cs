@@ -72,8 +72,6 @@ public class GrapplingHook : MonoBehaviour
         if (Physics.Raycast(cam.position, cam.forward, out hit, 50))
         {
             hooked = true;
-            line.enabled = true;
-
             targetPoint = hit.point;
         }
 
@@ -94,6 +92,8 @@ public class GrapplingHook : MonoBehaviour
 
     public void ConnectHook()
     {
+        line.enabled = true;
+
         line.SetPosition(0, transform.position);
         line.SetPosition(1, targetPoint);
 

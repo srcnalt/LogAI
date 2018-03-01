@@ -183,11 +183,6 @@ public class LogManager : MonoBehaviour
                 {
                     time += Time.deltaTime;
 
-                    if (line.action != ActionEnum.Idle && !invoked)
-                    {
-                        actionList[line.action.ToString()].Invoke();
-                    }
-
                     if (line.lookAtPoint.Vector3 != Vector3.zero)
                     {
                         Camera.main.transform.LookAt(line.lookAtPoint.Vector3);
@@ -195,6 +190,12 @@ public class LogManager : MonoBehaviour
                     else
                     {
                         Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation.Quaternion, line.cameraRotation.Quaternion, time / step);
+                    }
+
+                    if (line.action != ActionEnum.Idle && !invoked)
+                    {
+                        actionList[line.action.ToString()].Invoke();
+                        invoked = true;
                     }
 
                     yield return null;
@@ -230,11 +231,6 @@ public class LogManager : MonoBehaviour
             {
                 time += Time.deltaTime;
 
-                if (line.action != ActionEnum.Idle && !invoked)
-                {
-                    actionList[line.action.ToString()].Invoke();
-                }
-
                 if (line.lookAtPoint.Vector3 != Vector3.zero)
                 {
                     Camera.main.transform.LookAt(line.lookAtPoint.Vector3);
@@ -243,7 +239,13 @@ public class LogManager : MonoBehaviour
                 {
                     Camera.main.transform.rotation = Quaternion.Lerp(previousLog.cameraRotation.Quaternion, line.cameraRotation.Quaternion, time / step);
                 }
-                
+
+                if (line.action != ActionEnum.Idle && !invoked)
+                {
+                    actionList[line.action.ToString()].Invoke();
+                    invoked = true;
+                }
+
                 yield return null;
             }
 
