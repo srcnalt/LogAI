@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System;
 
 [CustomEditor(typeof(LogManager))]
 public class LogManagerEditor : Editor
@@ -44,12 +45,21 @@ public class LogManagerEditor : Editor
         //if gui changed or activeBatch is empty try loading
         if (GUI.changed || logManager.activeBatch.logSectionDictionary.Count == 0)
         {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(paths[index].FullName, FileMode.Open);
+            try
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Open(paths[index].FullName, FileMode.Open);
 
-            logManager.activeBatch = (LogBatch)bf.Deserialize(file);
+                logManager.activeBatch = (LogBatch)bf.Deserialize(file);
 
-            file.Dispose();
+                file.Dispose();
+            }
+            catch (Exception e)
+            {
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.HelpBox("No log batch found...", MessageType.Info);
+            }
         }
     }
 
