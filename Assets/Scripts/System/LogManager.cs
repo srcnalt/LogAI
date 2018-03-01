@@ -117,6 +117,8 @@ public class LogManager : MonoBehaviour
         CancelInvoke();
         recorderState = RecorderState.idle;
 
+        sessionLog.logSections.Add(logSection);
+
         sessionLog.sessionEnd = DateTime.Now.ToString("dd-MM-yy-HH-mm-ss");
 
         string json = JsonUtility.ToJson(sessionLog);
