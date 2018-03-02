@@ -1076,7 +1076,7 @@ MonoBehaviour:
   grapplingHook: {fileID: 2042123776}
   spawnPoint: {fileID: 26072919}
   loggerTick: 0.2
-  debugSections: 0
+  debugSections: 1
   unitSize: 15
   drawColor: {r: 1, g: 0, b: 0, a: 0.166}
   activeCubeColor: {r: 1, g: 0.8482759, b: 0, a: 0.459}

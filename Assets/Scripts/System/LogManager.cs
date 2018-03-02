@@ -159,9 +159,6 @@ public class LogManager : MonoBehaviour
     {
         Point3 currentSector = GetSector();
 
-        Debug.Log("Current Sector: " + currentSector.ToString());
-        Debug.Log("Is found? - " + activeBatch.logSectionDictionary.ContainsKey(currentSector));
-
         while (activeBatch.logSectionDictionary.ContainsKey(currentSector))
         {
             List<LogSection> logSectionList = activeBatch.logSectionDictionary[currentSector];
